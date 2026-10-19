@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smartboard Digital Classroom - Hukum I Newton (Edisi Ceria SMP)</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            board: {
+              base: '#f0fdf4',      /* Hijau mint sangat muda & segar (Mint 50) */
+              surface: '#ffffff',   /* Kartu putih bersih */
+              card: '#fef08a',      /* Kuning cerah pastel untuk aksen kartu */
+              cardBlue: '#e0f2fe',  /* Biru muda pastel */
+              cardRose: '#ffe4e6',  /* Pink/Merah muda pastel */
+              border: '#7dd3fc',    /* Sky 300 untuk batas ceria */
+              cyan: '#0284c7',      /* Biru cerah utama */
+              blue: '#4f46e5',      /* Indigo cerah */
+              lime: '#059669',      /* Hijau zamrud cerah */
+              amber: '#d97706',     /* Kuning/Oranye hangat */
+              rose: '#e11d48',      /* Merah mawar cerah */
+              glow: 'rgba(2, 132, 199, 0.2)'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar for Smartboard */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f0fdf4;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #38bdf8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0284c7;
+    }
+
+    .smart-glow {
+      box-shadow: 0 10px 30px -5px rgba(2, 132, 199, 0.2);
+    }
+    .board-bezel {
+      box-shadow: 0 0 0 3px #38bdf8, 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+    }
+    .interactive-card {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .interactive-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px -6px rgba(2, 132, 199, 0.25);
+    }
+  </style>
+</head>
+
+<body class="bg-board-base text-slate-800 min-h-screen font-sans flex flex-col antialiased selection:bg-board-cyan selection:text-white text-lg">
+
+  <!-- HEADER -->
+  <header class="w-full bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500 text-white backdrop-blur-md border-b-4 border-sky-300 sticky top-0 z-50 px-6 lg:px-10 py-5 transition-all shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-5">
+      
+      <!-- Brand & Classroom Status -->
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-white text-sky-600 flex items-center justify-center font-black text-2xl shadow-lg">
+          <i class="fa-solid fa-atom"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="font-display font-extrabold text-xl sm:text-2xl text-white tracking-tight">SMARTBOARD FISIKA SMP</h1>
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/20 text-white border border-white/40">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse"></span> KELAS 8 INTERAKTIF
+            </span>
+          </div>
+          <p class="text-sm sm:text-base text-sky-100 mt-0.5">Modul Seru: Prinsip Kelembaman &amp; Hukum I Newton (&Sigma;F = 0)</p>
+        </div>
+      </div>
+
+      <!-- Quick Audio & Status Controls -->
+      <div class="flex items-center gap-4 ml-auto sm:ml-0">
+        <div class="bg-white/15 px-4 py-2.5 rounded-2xl border-2 border-white/30 flex items-center gap-2.5 font-mono text-sm sm:text-base text-white font-bold backdrop-blur-sm">
+          <i class="fa-regular fa-clock"></i>
+          <span id="digitalClock">00:00:00 WIB</span>
+        </div>
+        <button id="toggleAudioBtn" class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/20 hover:bg-white/30 border-2 border-white/30 text-sm sm:text-base font-bold text-white transition-all active:scale-95 backdrop-blur-sm" title="Efek Suara Sintesis Fisika">
+          <i class="fa-solid fa-volume-high text-yellow-300 text-lg" id="audioIcon"></i>
+          <span id="audioStatusText" class="hidden sm:inline">Suara On</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Stepped Learning Journey Stepper -->
+    <div class="max-w-7xl mx-auto mt-4 pt-4 border-t-2 border-white/20">
+      <nav class="flex items-center justify-between gap-2 overflow-x-auto pb-2" id="stepNavigator" aria-label="Alur Belajar">
+        
+        <!-- Step 1 -->
+        <button data-step="1" class="step-nav-btn active flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white text-sky-700 shadow-lg">
+          <span class="w-7 h-7 rounded-xl bg-sky-600 text-white flex items-center justify-center font-mono text-xs font-black">1</span>
+          <span>Pembuka</span>
+        </button>
+        <div class="w-6 h-1 bg-white/30 shrink-0"></div>
+
+        <!-- Step 2 -->
+        <button data-step="2" class="step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white hover:bg-white/30 border-2 border-white/30">
+          <span class="w-7 h-7 rounded-xl bg-white/30 text-white flex items-center justify-center font-mono text-xs font-black">2</span>
+          <span>Apersepsi</span>
+        </button>
+        <div class="w-6 h-1 bg-white/30 shrink-0"></div>
+
+        <!-- Step 3 -->
+        <button data-step="3" class="step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white hover:bg-white/30 border-2 border-white/30">
+          <span class="w-7 h-7 rounded-xl bg-white/30 text-white flex items-center justify-center font-mono text-xs font-black">3</span>
+          <span>Materi Fisika</span>
+        </button>
+        <div class="w-6 h-1 bg-white/30 shrink-0"></div>
+
+        <!-- Step 4 -->
+        <button data-step="4" class="step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white hover:bg-white/30 border-2 border-white/30">
+          <span class="w-7 h-7 rounded-xl bg-white/30 text-white flex items-center justify-center font-mono text-xs font-black">4</span>
+          <span>Simulasi Lab</span>
+        </button>
+        <div class="w-6 h-1 bg-white/30 shrink-0"></div>
+
+        <!-- Step 5 -->
+        <button data-step="5" class="step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white hover:bg-white/30 border-2 border-white/30">
+          <span class="w-7 h-7 rounded-xl bg-white/30 text-white flex items-center justify-center font-mono text-xs font-black">5</span>
+          <span>Evaluasi &amp; Kuis</span>
+        </button>
+
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto w-full px-6 lg:px-10 py-8 flex-grow flex flex-col">
+
+    <!-- ========================================================================= -->
+    <!-- TAHAP 1: HALAMAN PEMBUKA                                                  -->
+    <!-- ========================================================================= -->
+    <section id="step-pane-1" class="step-pane flex flex-col gap-6">
+      <div class="relative bg-gradient-to-br from-sky-100 via-indigo-50 to-emerald-100 border-4 border-sky-400 rounded-3xl p-8 lg:p-14 board-bezel overflow-hidden smart-glow">
+        
+        <div class="absolute -right-24 -top-24 w-96 h-96 bg-yellow-200/50 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-24 -bottom-24 w-96 h-96 bg-pink-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-4xl flex flex-col gap-7">
+          <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-amber-200 text-amber-900 border-2 border-amber-400 text-sm font-mono font-extrabold uppercase tracking-wider w-fit shadow-sm">
+            <i class="fa-solid fa-graduation-cap text-lg text-amber-700"></i> Modul IPA Seru Kelas 8 SMP
+          </div>
+
+          <h2 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold font-display text-slate-900 tracking-tight leading-tight">
+            Hukum I Newton:<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-indigo-600 to-emerald-600">
+              Mengapa Benda Malas Bergerak?
+            </span>
+          </h2>
+
+          <p class="text-lg sm:text-xl text-slate-700 leading-relaxed max-w-3xl font-medium">
+            Halo Sobat Sains! Selamat datang di laboratorium fisika interaktif. Yuk, kita selidiki bersama rahasia di balik benda yang anteng diam dan benda yang terus meluncur tanpa henti!
+          </p>
+
+          <!-- Capaian Pembelajaran -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+            <div class="bg-white/90 border-2 border-sky-300 p-5 rounded-3xl flex items-start gap-4 shadow-md">
+              <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center shrink-0 font-bold text-lg shadow-sm">1</div>
+              <div>
+                <h4 class="text-base sm:text-lg font-bold text-slate-900">Kenal Kelembaman</h4>
+                <p class="text-sm text-slate-600 mt-1">Memahami sifat alami benda yang mempertahankan posisinya.</p>
+              </div>
+            </div>
+
+            <div class="bg-white/90 border-2 border-indigo-300 p-5 rounded-3xl flex items-start gap-4 shadow-md">
+              <div class="w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shrink-0 font-bold text-lg shadow-sm">2</div>
+              <div>
+                <h4 class="text-base sm:text-lg font-bold text-slate-900">Gaya Seimbang (&Sigma;F = 0)</h4>
+                <p class="text-sm text-slate-600 mt-1">Membuktikan resultan gaya nol membuat kecepatan tetap.</p>
+              </div>
+            </div>
+
+            <div class="bg-white/90 border-2 border-emerald-300 p-5 rounded-3xl flex items-start gap-4 shadow-md">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 font-bold text-lg shadow-sm">3</div>
+              <div>
+                <h4 class="text-base sm:text-lg font-bold text-slate-900">Eksperimen Asyik</h4>
+                <p class="text-sm text-slate-600 mt-1">Mencoba simulasi bola, rem mobil, hingga roket luar angkasa.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Action -->
+          <div class="pt-4 flex flex-wrap items-center gap-5">
+            <button onclick="goToStep(2)" class="px-8 py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-base sm:text-lg flex items-center gap-3.5 shadow-xl shadow-sky-500/35 active:scale-95 transition-all">
+              <span>Mulai Petualangan (Apersepsi)</span>
+              <i class="fa-solid fa-arrow-right text-lg"></i>
+            </button>
+            <span class="text-sm sm:text-base text-slate-700 font-mono font-bold">
+              <i class="fa-solid fa-clock text-sky-600 mr-2"></i> Estimasi Waktu: 10 Menit
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAHAP 2: APERSEPSI (DENGAN ILUSTRASI GAMBAR / VISUAL KARTUN)            -->
+    <!-- ========================================================================= -->
+    <section id="step-pane-2" class="step-pane hidden flex-col gap-6">
+      
+      <div class="bg-gradient-to-r from-amber-100 via-orange-50 to-yellow-100 border-4 border-amber-300 rounded-3xl p-8 board-bezel shadow-md">
+        <span class="px-4 py-1.5 rounded-full bg-amber-500 text-white border-2 border-amber-600 text-xs sm:text-sm font-mono font-bold uppercase shadow-sm">
+          Tahap 2 &bull; Teka-Teki Kehidupan Sehari-hari
+        </span>
+        <h3 class="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 mt-3">
+          Pernahkah Kamu Mengalami Peristiwa Ini di Angkot atau Meja Makan?
+        </h3>
+        <p class="text-base sm:text-lg text-slate-700 mt-2 font-medium">
+          Perhatikan ilustrasi gambar di bawah ini dan bayangkan kejadiannya dalam kehidupan nyata!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Kasus Apersepsi 1 -->
+        <div class="bg-gradient-to-b from-rose-50 to-white border-4 border-rose-300 rounded-3xl p-6 flex flex-col justify-between interactive-card shadow-md">
+          <div>
+            <!-- Ilustrasi Gambar Visual Menarik menggunakan Unsplash + Bingkai Cantik -->
+            <div class="w-full h-52 rounded-2xl overflow-hidden mb-5 border-2 border-rose-200 shadow-inner relative group">
+              <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80" alt="Ilustrasi Penumpang Bus" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                <span class="text-white font-bold text-sm bg-rose-600/90 px-3 py-1 rounded-xl backdrop-blur-sm">
+                  <i class="fa-solid fa-bus mr-1"></i> Penumpang Bus / Angkot
+                </span>
+              </div>
+            </div>
+
+            <span class="text-sm font-mono text-rose-700 uppercase font-extrabold bg-rose-100 px-3 py-1 rounded-lg">Kejadian 01</span>
+            <h4 class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">Badan Terdorong ke Depan Saat Angkot Direm Mendadak</h4>
+            <p class="text-base sm:text-lg text-slate-700 mt-3 leading-relaxed">
+              Saat kamu berdiri di angkot yang sedang melaju kencang, tiba-tiba sopir menginjak rem. Kenapa tubuhmu langsung terhuyung ke depan? Padahal yang diinjak remnya kan roda angkot?
+            </p>
+          </div>
+
+          <div class="mt-6 pt-5 border-t-2 border-rose-200">
+            <button onclick="toggleApersepsiAnswer('apAnswer1', this)" class="w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-rose-100 border-2 border-rose-300 text-sm sm:text-base font-bold text-rose-700 flex items-center justify-between transition-all shadow-sm">
+              <span><i class="fa-regular fa-eye mr-2.5"></i> Lihat Penjelasan Ilmiahnya</span>
+              <i class="fa-solid fa-chevron-down transition-transform text-lg"></i>
+            </button>
+            <div id="apAnswer1" class="hidden mt-4 p-5 rounded-2xl bg-rose-100/70 border-2 border-rose-300 text-sm sm:text-base text-slate-800 leading-relaxed shadow-inner">
+              <strong class="text-rose-700 block mb-1.5 text-base font-extrabold">Penjelasan Fisika:</strong>
+              Karena sebelum direm, tubuhmu ikut bergerak bersama angkot! Ketika angkot berhenti mendadak, <strong>tubuhmu tidak ikut direm</strong>, sehingga tubuhmu ingin terus melaju ke depan. Inilah yang dinamakan kelembaman!
+            </div>
+          </div>
+        </div>
+
+        <!-- Kasus Apersepsi 2 -->
+        <div class="bg-gradient-to-b from-sky-50 to-white border-4 border-sky-300 rounded-3xl p-6 flex flex-col justify-between interactive-card shadow-md">
+          <div>
+            <!-- Ilustrasi Gambar Visual Menarik -->
+            <div class="w-full h-52 rounded-2xl overflow-hidden mb-5 border-2 border-sky-200 shadow-inner relative group">
+              <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="Ilustrasi Meja Makan Piring" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                <span class="text-white font-bold text-sm bg-sky-600/90 px-3 py-1 rounded-xl backdrop-blur-sm">
+                  <i class="fa-solid fa-utensils mr-1"></i> Piring di Atas Meja
+                </span>
+              </div>
+            </div>
+
+            <span class="text-sm font-mono text-sky-700 uppercase font-extrabold bg-sky-100 px-3 py-1 rounded-lg">Kejadian 02</span>
+            <h4 class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">Taplak Meja Ditarik Cepat, Tapi Piring Tidak Jatuh</h4>
+            <p class="text-base sm:text-lg text-slate-700 mt-3 leading-relaxed">
+              Pernah lihat aksi menarik taplak meja tanpa membuat piring di atasnya jatuh berserakan? Kenapa piringnya tidak ikut tertarik bersama kain taplak?
+            </p>
+          </div>
+
+          <div class="mt-6 pt-5 border-t-2 border-sky-200">
+            <button onclick="toggleApersepsiAnswer('apAnswer2', this)" class="w-full py-3.5 px-5 rounded-2xl bg-white hover:bg-sky-100 border-2 border-sky-300 text-sm sm:text-base font-bold text-sky-700 flex items-center justify-between transition-all shadow-sm">
+              <span><i class="fa-regular fa-eye mr-2.5"></i> Lihat Penjelasan Ilmiahnya</span>
+              <i class="fa-solid fa-chevron-down transition-transform text-lg"></i>
+            </button>
+            <div id="apAnswer2" class="hidden mt-4 p-5 rounded-2xl bg-sky-100/70 border-2 border-sky-300 text-sm sm:text-base text-slate-800 leading-relaxed shadow-inner">
+              <strong class="text-sky-700 block mb-1.5 text-base font-extrabold">Penjelasan Fisika:</strong>
+              Piring awalnya diam dan ingin <strong>mempertahankan posisi diamnya</strong>. Karena taplak ditarik dengan sangat cepat, waktu gesekan terlalu singkat untuk menggeser piring. Hasilnya, piring tetap tenang di tempatnya!
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <button onclick="goToStep(1)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Pembuka
+        </button>
+        <button onclick="goToStep(3)" class="px-7 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-sm sm:text-base font-extrabold flex items-center gap-2.5 shadow-xl shadow-sky-500/25">
+          Lanjut ke Materi Pembelajaran <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAHAP 3: MODUL MATERI INTERAKTIF                                          -->
+    <!-- ========================================================================= -->
+    <section id="step-pane-3" class="step-pane hidden flex-col gap-6">
+      
+      <div class="bg-gradient-to-r from-sky-100 via-indigo-50 to-emerald-100 border-4 border-indigo-300 rounded-3xl p-8 sm:p-10 board-bezel shadow-md">
+        <span class="px-4 py-1.5 rounded-full bg-indigo-600 text-white border-2 border-indigo-700 font-mono text-xs sm:text-sm font-bold uppercase shadow-sm">
+          Tahap 3 &bull; Rangkuman Materi Ringkas
+        </span>
+        <h3 class="text-3xl sm:text-5xl font-extrabold font-display text-slate-900 mt-3 leading-tight">
+          Bunyi Hukum I Newton dan Rumusnya
+        </h3>
+        <p class="text-base sm:text-lg text-slate-700 mt-3 leading-relaxed max-w-3xl font-medium">
+          Hukum I Newton dicetuskan oleh ilmuwan terkenal bernama <strong>Sir Isaac Newton</strong>. Hukum ini juga sering disebut sebagai <strong>Hukum Kelembaman (Inersia)</strong>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Card 1 -->
+        <div class="bg-white border-4 border-sky-300 rounded-3xl p-8 flex flex-col shadow-md">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-bold text-xl shadow-sm">
+              <i class="fa-solid fa-scroll"></i>
+            </div>
+            <div>
+              <span class="text-sm font-mono text-sky-600 font-bold uppercase">Bunyi Hukum</span>
+              <h4 class="text-lg sm:text-xl font-bold text-slate-900">1. Bunyi Resmi Hukum I Newton</h4>
+            </div>
+          </div>
+          <blockquote class="p-5 rounded-2xl bg-sky-50 border-l-8 border-sky-500 text-base sm:text-lg text-slate-800 italic my-3 leading-relaxed shadow-inner">
+            "Jika resultan gaya pada suatu benda bernilai nol, maka benda yang diam akan tetap diam, dan benda yang bergerak lurus beraturan akan tetap bergerak lurus beraturan."
+          </blockquote>
+          <ul class="text-sm sm:text-base text-slate-700 space-y-3 mt-3 leading-relaxed">
+            <li><strong class="text-slate-900">&bull; Benda Diam:</strong> Kecepatan awal v = 0, tanpa gaya luar tidak akan bisa bergerak sendiri.</li>
+            <li><strong class="text-slate-900">&bull; Benda Bergerak:</strong> Terus melaju lurus beraturan jika tidak ada gaya hambatan luar.</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white border-4 border-emerald-300 rounded-3xl p-8 flex flex-col shadow-md">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold text-xl shadow-sm">
+              <i class="fa-solid fa-square-root-variable"></i>
+            </div>
+            <div>
+              <span class="text-sm font-mono text-emerald-600 font-bold uppercase">Rumus Matematika</span>
+              <h4 class="text-lg sm:text-xl font-bold text-slate-900">2. Persamaan (&Sigma;F = 0)</h4>
+            </div>
+          </div>
+          <div class="p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 text-center font-mono my-3 shadow-inner">
+            <div class="text-4xl sm:text-5xl font-extrabold text-emerald-600 tracking-wider">&Sigma;F = 0 &rArr; a = 0</div>
+            <div class="text-sm text-slate-600 mt-2">Total Gaya = 0 &rArr; Percepatan Tidak Ada</div>
+          </div>
+          <p class="text-sm sm:text-base text-slate-700 leading-relaxed mt-2 font-medium">
+            Simbol <strong>&Sigma;F</strong> artinya jumlah gaya yang bekerja. Jika total gaya seimbang (nol), maka percepatan benda 0 m/s², artinya kecepatan benda konstan atau diam.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white border-4 border-amber-300 rounded-3xl p-8 flex flex-col shadow-md">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-xl shadow-sm">
+              <i class="fa-solid fa-weight-hanging"></i>
+            </div>
+            <div>
+              <span class="text-sm font-mono text-amber-600 font-bold uppercase">Sifat Materi</span>
+              <h4 class="text-lg sm:text-xl font-bold text-slate-900">3. Hubungan Massa &amp; Kelembaman</h4>
+            </div>
+          </div>
+          <p class="text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
+            Semakin besar massa suatu benda, semakin besar pula kelembaman (sifat malasnya):
+          </p>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm sm:text-base">
+            <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+              <span class="text-amber-700 font-extrabold block mb-1.5 text-base">Massa Kecil (Bola Tenis)</span>
+              <span class="text-slate-600">Kelembaman kecil, sangat mudah digerakkan atau dihentikan.</span>
+            </div>
+            <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+              <span class="text-amber-700 font-extrabold block mb-1.5 text-base">Massa Besar (Truk)</span>
+              <span class="text-slate-600">Kelembaman sangat besar, sulit didorong dan sangat sulit direm.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-white border-4 border-rose-300 rounded-3xl p-8 flex flex-col shadow-md">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center font-bold text-xl shadow-sm">
+              <i class="fa-solid fa-wind"></i>
+            </div>
+            <div>
+              <span class="text-sm font-mono text-rose-600 font-bold uppercase">Miskonsepsi</span>
+              <h4 class="text-lg sm:text-xl font-bold text-slate-900">4. Kenapa Bola yang Ditendang Bisa Berhenti?</h4>
+            </div>
+          </div>
+          <p class="text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
+            Di bumi, bola menggelinding lalu berhenti <strong>bukan karena ingin diam</strong>, melainkan ada gaya luar tak kasatmata yang menghentikannya:
+          </p>
+          <div class="mt-4 p-4 rounded-2xl bg-rose-50 border-2 border-rose-200 text-sm sm:text-base text-slate-700 flex items-center gap-4 shadow-inner">
+            <i class="fa-solid fa-triangle-exclamation text-rose-600 text-2xl shrink-0"></i>
+            <span><strong>Gaya Gesek Permukaan &amp; Hambatan Udara</strong> yang bertindak sebagai gaya hambat yang memperlambat laju bola hingga berhenti.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <button onclick="goToStep(2)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Apersepsi
+        </button>
+        <button onclick="goToStep(4)" class="px-7 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-sm sm:text-base font-extrabold flex items-center gap-2.5 shadow-xl shadow-sky-500/25">
+          Uji di Laboratorium Simulasi <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAHAP 4: LABORATORIUM SIMULASI INTERAKTIF                                 -->
+    <!-- ========================================================================= -->
+    <section id="step-pane-4" class="step-pane hidden flex-col gap-6">
+      
+      <!-- Scenario Selector -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button class="sim-case-btn active p-5 rounded-3xl bg-white border-4 border-sky-500 text-left flex items-start gap-4 transition-all group shadow-md" data-case="ball">
+          <div class="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+            <i class="fa-solid fa-futbol"></i>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider font-mono font-extrabold text-sky-600">Kasus 1</div>
+            <div class="font-bold text-slate-900 text-base sm:text-lg mt-0.5">Bola di Lapangan</div>
+            <div class="text-sm text-slate-600 mt-1">Rumput vs Es Licin</div>
+          </div>
+        </button>
+
+        <button class="sim-case-btn p-5 rounded-3xl bg-white border-4 border-rose-300 text-left flex items-start gap-4 transition-all group hover:border-rose-400 shadow-md" data-case="car">
+          <div class="w-12 h-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+            <i class="fa-solid fa-car-burst"></i>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider font-mono font-extrabold text-rose-600">Kasus 2</div>
+            <div class="font-bold text-slate-900 text-base sm:text-lg mt-0.5">Mobil &amp; Rem Mendadak</div>
+            <div class="text-sm text-slate-600 mt-1">Penumpang tersentak maju</div>
+          </div>
+        </button>
+
+        <button class="sim-case-btn p-5 rounded-3xl bg-white border-4 border-emerald-300 text-left flex items-start gap-4 transition-all group hover:border-emerald-400 shadow-md" data-case="rocket">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+            <i class="fa-solid fa-shuttle-space"></i>
+          </div>
+          <div>
+            <div class="text-xs uppercase tracking-wider font-mono font-extrabold text-emerald-600">Kasus 3</div>
+            <div class="font-bold text-slate-900 text-base sm:text-lg mt-0.5">Roket di Luar Angkasa</div>
+            <div class="text-sm text-slate-600 mt-1">Vakum tanpa gesekan</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- Main Canvas & Telemetry -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Viewport Canvas (8 Cols) -->
+        <div class="lg:col-span-8 flex flex-col bg-white rounded-3xl border-4 border-sky-300 board-bezel overflow-hidden shadow-md">
+          
+          <div class="bg-gradient-to-r from-sky-100 to-indigo-100 px-6 py-4 border-b-2 border-sky-300 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <span class="w-3.5 h-3.5 rounded-full bg-sky-600 shadow-md shadow-sky-500 animate-ping"></span>
+              <span class="font-mono text-sm uppercase tracking-wider font-extrabold text-sky-800" id="caseBadgeText">KASUS 1: BOLA DIAM &amp; GAYA DORONG</span>
+            </div>
+            <div class="flex items-center gap-4 text-sm font-mono text-slate-700 font-bold">
+              <span>FPS: <strong class="text-emerald-600" id="fpsDisplay">60</strong></span>
+              <span>Waktu: <strong class="text-slate-900" id="simTimeDisplay">0.0s</strong></span>
+            </div>
+          </div>
+
+          <div class="mx-5 mt-5 p-4 bg-sky-50 border-2 border-sky-300 rounded-2xl flex items-start gap-4 shadow-inner">
+            <i class="fa-solid fa-lightbulb text-sky-600 text-2xl mt-1 shrink-0" id="simBannerIcon"></i>
+            <div>
+              <div class="text-sm font-bold text-sky-700 uppercase tracking-wider font-mono" id="simBannerTitle">Observasi Status Benda</div>
+              <div class="text-sm sm:text-base text-slate-700 mt-1 leading-relaxed font-medium" id="simBannerText">
+                Bola berada dalam kesetimbangan: Gaya berat ditiadakan oleh gaya normal (&Sigma;F = 0). Bola akan tetap diam sampai ada gaya luar yang menggesernya.
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas Element -->
+          <div class="relative w-full aspect-[16/9] min-h-[380px] max-h-[500px] bg-slate-900 overflow-hidden cursor-crosshair mt-4">
+            <canvas id="classroomPhysicsCanvas" class="w-full h-full block"></canvas>
+
+            <!-- On-Canvas Telemetry HUD -->
+            <div class="absolute bottom-4 left-5 bg-white/95 backdrop-blur-md border-2 border-sky-300 px-4 py-3 rounded-2xl flex items-center gap-4 text-sm font-mono font-bold pointer-events-none shadow-lg text-slate-800">
+              <div>Kecepatan (v): <span class="text-sky-600" id="canvasHudV">0.00 m/s</span></div>
+              <div class="w-px h-5 bg-slate-300"></div>
+              <div>Percepatan (a): <span class="text-amber-600" id="canvasHudA">0.00 m/s²</span></div>
+              <div class="w-px h-5 bg-slate-300"></div>
+              <div>Resultan (&Sigma;F): <span class="text-emerald-600" id="canvasHudF">0.00 N</span></div>
+            </div>
+          </div>
+
+          <!-- Cockpit Controls -->
+          <div class="p-5 bg-sky-50 border-t-2 border-sky-200 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center flex-wrap gap-3" id="caseActionControls">
+              <!-- Dynamically rendered -->
+            </div>
+
+            <div class="flex items-center gap-3 ml-auto">
+              <button id="simPlayPauseBtn" class="px-5 py-3 rounded-2xl bg-white hover:bg-sky-100 border-2 border-sky-300 text-sm font-bold text-slate-700 flex items-center gap-2 transition-all shadow-sm">
+                <i class="fa-solid fa-pause text-sky-600 text-base" id="simPlayPauseIcon"></i>
+                <span id="simPlayPauseText">Jeda</span>
+              </button>
+              <button id="simResetBtn" class="px-5 py-3 rounded-2xl bg-white hover:bg-rose-100 border-2 border-rose-300 text-sm font-bold text-slate-700 hover:text-rose-600 flex items-center gap-2 transition-all shadow-sm">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Telemetry Sidebar (4 Cols) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+          
+          <div class="bg-white border-4 border-indigo-200 rounded-3xl p-6 shadow-md">
+            <h4 class="font-display font-bold text-base text-slate-900 flex items-center gap-2.5 mb-4">
+              <i class="fa-solid fa-chart-line text-indigo-600 text-lg"></i> Analisis Vektor Gaya
+            </h4>
+
+            <div class="grid grid-cols-2 gap-4 mb-5">
+              <div class="bg-rose-50 p-4 rounded-2xl border-2 border-rose-200">
+                <span class="text-xs font-mono text-rose-700 uppercase font-bold">Gaya Berat (W)</span>
+                <div class="text-lg sm:text-xl font-extrabold font-mono text-rose-600 mt-1" id="teleW">49.0 N</div>
+                <span class="text-xs text-slate-500">Arah: Bawah</span>
+              </div>
+              <div class="bg-sky-50 p-4 rounded-2xl border-2 border-sky-200">
+                <span class="text-xs font-mono text-sky-700 uppercase font-bold">Gaya Normal (N)</span>
+                <div class="text-lg sm:text-xl font-extrabold font-mono text-sky-600 mt-1" id="teleN">49.0 N</div>
+                <span class="text-xs text-slate-500">Arah: Atas</span>
+              </div>
+              <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+                <span class="text-xs font-mono text-amber-700 uppercase font-bold">Gaya Luar (F_ext)</span>
+                <div class="text-lg sm:text-xl font-extrabold font-mono text-amber-600 mt-1" id="teleFext">0.0 N</div>
+                <span class="text-xs text-slate-500">Dorongan</span>
+              </div>
+              <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300">
+                <span class="text-xs font-mono text-slate-700 uppercase font-bold">Gaya Gesek (f_g)</span>
+                <div class="text-lg sm:text-xl font-extrabold font-mono text-slate-700 mt-1" id="teleFgesek">0.0 N</div>
+                <span class="text-xs text-slate-500">Hambatan</span>
+              </div>
+            </div>
+
+            <div class="p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-300 flex items-center justify-between shadow-inner">
+              <div>
+                <div class="text-xs font-mono text-emerald-800 font-extrabold">TOTAL RESULTAN (&Sigma;F)</div>
+                <div class="text-xl font-extrabold font-mono text-slate-900 mt-0.5" id="teleResultant">0.00 N</div>
+              </div>
+              <span id="teleStatusBadge" class="px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-emerald-200 text-emerald-800 border-2 border-emerald-400">
+                SETIMBANG (a = 0)
+              </span>
+            </div>
+          </div>
+
+          <div class="bg-white border-4 border-sky-200 rounded-3xl p-6 flex flex-col gap-3 shadow-md">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-chalkboard-user text-sky-600 text-lg"></i>
+              <h4 class="font-display font-bold text-base text-slate-900">Catatan Guru</h4>
+            </div>
+            <div class="text-sm sm:text-base text-slate-700 leading-relaxed space-y-3 font-medium" id="smartboardTeacherNotes">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <button onclick="goToStep(3)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Materi
+        </button>
+        <button onclick="goToStep(5)" class="px-7 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-sm sm:text-base font-extrabold flex items-center gap-2.5 shadow-xl shadow-sky-500/25">
+          Lanjut ke Evaluasi Kuis <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAHAP 5: EVALUASI & SERTIFIKAT                                            -->
+    <!-- ========================================================================= -->
+    <section id="step-pane-5" class="step-pane hidden flex-col gap-6">
+      
+      <div class="bg-gradient-to-r from-emerald-100 via-teal-50 to-sky-100 border-4 border-emerald-300 rounded-3xl p-8 board-bezel shadow-md flex flex-wrap items-center justify-between gap-5">
+        <div>
+          <span class="px-4 py-1.5 rounded-full bg-emerald-600 text-white border-2 border-emerald-700 text-xs sm:text-sm font-mono font-bold uppercase shadow-sm">
+            Tahap 5 &bull; Uji Pemahaman Seru
+          </span>
+          <h3 class="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 mt-3">
+            Kuis Pemahaman Hukum I Newton
+          </h3>
+          <p class="text-base sm:text-lg text-slate-700 mt-2 font-medium">
+            Jawab pertanyaan berikut dengan benar untuk menguji seberapa paham kamu tentang materi ini!
+          </p>
+        </div>
+
+        <div class="flex items-center gap-5 bg-white px-6 py-4 rounded-2xl border-2 border-emerald-300 shadow-sm">
+          <div class="text-center font-mono">
+            <span class="text-xs text-slate-500 uppercase block font-bold">Soal</span>
+            <span class="text-lg font-extrabold text-sky-600" id="evalProgressText">1 / 3</span>
+          </div>
+          <div class="w-px h-9 bg-slate-300"></div>
+          <div class="text-center font-mono">
+            <span class="text-xs text-slate-500 uppercase block font-bold">Skor</span>
+            <span class="text-lg font-extrabold text-emerald-600" id="evalScoreText">0 / 100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Box -->
+      <div class="bg-white border-4 border-emerald-300 rounded-3xl p-8 sm:p-10 max-w-4xl mx-auto w-full board-bezel shadow-md" id="evalQuizBox">
+        
+        <div class="mb-6">
+          <span class="font-mono text-sm font-extrabold text-sky-600 uppercase tracking-wider" id="evalCaseCategory">
+            KASUS 1 &bull; BOLA DI PERMUKAAN ES LICIN
+          </span>
+          <h4 class="text-lg sm:text-xl font-bold text-slate-900 mt-2 leading-relaxed" id="evalQuestionPrompt">
+            Pada simulasi Kasus 1, ketika permukaan diubah menjadi 'Es Licin Sempurna' dan bola ditendang, mengapa bola terus meluncur tanpa berhenti?
+          </h4>
+        </div>
+
+        <div class="flex flex-col gap-4" id="evalOptionsContainer">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div id="evalFeedbackBox" class="hidden mt-6 p-5 rounded-2xl border-2 transition-all">
+          <div class="flex items-center gap-2.5 font-bold text-base mb-2" id="evalFeedbackTitle"></div>
+          <p class="text-sm sm:text-base text-slate-700 leading-relaxed font-medium" id="evalFeedbackText"></p>
+        </div>
+
+        <div class="mt-8 pt-5 border-t-2 border-slate-200 flex items-center justify-between">
+          <button id="evalPrevBtn" onclick="prevEvalQuestion()" class="px-5 py-3 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+            <i class="fa-solid fa-chevron-left"></i> Sebelumnya
+          </button>
+          <button id="evalNextBtn" onclick="nextEvalQuestion()" class="px-6 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-sm font-extrabold text-white flex items-center gap-2.5 shadow-lg shadow-sky-500/25">
+            Selanjutnya <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Certificate Card -->
+      <div id="completionCertificateCard" class="hidden bg-gradient-to-br from-sky-100 via-white to-emerald-100 border-4 border-emerald-400 rounded-3xl p-8 sm:p-12 max-w-4xl mx-auto w-full board-bezel text-center shadow-xl">
+        <div class="w-20 h-20 rounded-3xl bg-emerald-500 text-white flex items-center justify-center text-4xl mx-auto mb-5 shadow-xl shadow-emerald-500/30">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <span class="px-4 py-1.5 rounded-full bg-emerald-200 text-emerald-900 border-2 border-emerald-400 text-xs sm:text-sm font-mono font-bold uppercase shadow-sm">
+          Sertifikat Belajar Fisika SMP
+        </span>
+        <h3 class="text-3xl sm:text-4xl font-extrabold font-display text-slate-900 mt-3">
+          Hebat! Kamu Juara Hukum I Newton!
+        </h3>
+        <p class="text-sm sm:text-base text-slate-700 max-w-2xl mx-auto mt-3 leading-relaxed font-medium">
+          Kamu telah menyelesaikan seluruh petualangan belajar dari awal hingga kuis interaktif dengan nilai akhir: <span class="text-emerald-600 font-mono font-extrabold text-lg" id="certFinalScore">100 / 100</span>.
+        </p>
+
+        <div class="mt-8 p-6 rounded-3xl bg-white border-2 border-emerald-300 text-left max-w-2xl mx-auto shadow-sm">
+          <div class="text-sm font-mono text-sky-700 font-bold uppercase mb-3">Poin Penting yang Kamu Pelajari:</div>
+          <ul class="text-sm sm:text-base text-slate-700 space-y-2.5 leading-relaxed font-medium">
+            <li>&bull; <strong>Kelembaman:</strong> Sifat benda yang ingin mempertahankan posisinya (diam atau bergerak).</li>
+            <li>&bull; <strong>Benda Diam:</strong> Tanpa gaya luar, benda diam akan terus diam (&Sigma;F = 0 &rArr; v = 0).</li>
+            <li>&bull; <strong>Benda Bergerak:</strong> Tanpa gesekan, benda akan terus meluncur lurus selamanya (&Sigma;F = 0 &rArr; v = konstan).</li>
+            <li>&bull; <strong>Gaya Luar:</strong> Benda baru akan berubah kecepatan atau arahnya jika ada gaya luar yang tidak seimbang (&Sigma;F &ne; 0).</li>
+          </ul>
+        </div>
+
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <button onclick="goToStep(4)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+            <i class="fa-solid fa-flask-vial text-sky-600 text-lg"></i> Main Simulasi Lagi
+          </button>
+          <button onclick="resetEvaluationQuiz()" class="px-6 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-extrabold flex items-center gap-2.5 shadow-md shadow-sky-500/25">
+            <i class="fa-solid fa-arrows-rotate"></i> Ulangi Kuis
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4">
+        <button onclick="goToStep(4)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Simulasi
+        </button>
+        <button onclick="goToStep(1)" class="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 font-bold border-2 border-sky-300 flex items-center gap-2.5 shadow-sm">
+          Kembali ke Beranda <i class="fa-solid fa-house"></i>
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="w-full bg-gradient-to-r from-sky-600 via-indigo-600 to-emerald-600 text-white py-5 px-6 text-center text-sm font-medium mt-auto shadow-inner">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <p>&copy; 2026 Laboratorium IPA SMP Digital &bull; Prinsip Kelembaman Hukum I Newton</p>
+      <p class="font-mono text-sky-100 font-bold">&Sigma;F = 0 &rArr; Benda Mempertahankan Keadaannya</p>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================================
+       1. WEB AUDIO API SYNTHESIZER
+       ========================================================================= */
+    const SoundEngine = {
+      enabled: true,
+      audioCtx: null,
+      init() {
+        if (!this.audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.audioCtx = new AudioContext();
+        }
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+      },
+      playTone(freq = 440, type = 'sine', duration = 0.12, gainLevel = 0.15) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+          gain.gain.setValueAtTime(gainLevel, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+          osc.start();
+          osc.stop(this.audioCtx.currentTime + duration);
+        } catch (e) {}
+      },
+      click() { this.playTone(750, 'sine', 0.05, 0.08); },
+      kick() { 
+        this.playTone(80, 'triangle', 0.25, 0.35);
+        setTimeout(() => this.playTone(150, 'sine', 0.12, 0.2), 30);
+      },
+      brake() { this.playTone(280, 'sawtooth', 0.4, 0.16); },
+      thrust() { this.playTone(85, 'sawtooth', 0.55, 0.22); },
+      correct() {
+        this.playTone(523.25, 'triangle', 0.12, 0.2);
+        setTimeout(() => this.playTone(659.25, 'triangle', 0.18, 0.2), 100);
+      },
+      wrong() { this.playTone(200, 'sawtooth', 0.25, 0.2); }
+    };
+
+    const toggleAudioBtn = document.getElementById('toggleAudioBtn');
+    const audioIcon = document.getElementById('audioIcon');
+    const audioStatusText = document.getElementById('audioStatusText');
+    toggleAudioBtn.addEventListener('click', () => {
+      SoundEngine.enabled = !SoundEngine.enabled;
+      if (SoundEngine.enabled) {
+        audioIcon.className = 'fa-solid fa-volume-high text-yellow-300';
+        audioStatusText.textContent = 'Suara On';
+        SoundEngine.click();
+      } else {
+        audioIcon.className = 'fa-solid fa-volume-xmark text-slate-300';
+        audioStatusText.textContent = 'Suara Off';
+      }
+    });
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('digitalClock').textContent = `${h}:${m}:${s} WIB`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* =========================================================================
+       2. STEPPER NAVIGATION CONTROLLER
+       ========================================================================= */
+    let currentStep = 1;
+    const totalSteps = 5;
+
+    function goToStep(stepNum) {
+      if (stepNum < 1 || stepNum > totalSteps) return;
+      SoundEngine.click();
+      currentStep = stepNum;
+
+      document.querySelectorAll('.step-nav-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        const iconSpan = btn.querySelector('span');
+
+        if (s === currentStep) {
+          btn.className = 'step-nav-btn active flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-extrabold transition-all shrink-0 bg-white text-sky-700 shadow-lg';
+          if (iconSpan) {
+            iconSpan.className = 'w-7 h-7 rounded-xl bg-sky-600 text-white flex items-center justify-center font-mono text-xs font-black';
+          }
+        } else if (s < currentStep) {
+          btn.className = 'step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white border-2 border-emerald-300 hover:bg-white/30';
+          if (iconSpan) {
+            iconSpan.className = 'w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-mono text-xs font-black';
+          }
+        } else {
+          btn.className = 'step-nav-btn flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm sm:text-base font-bold transition-all shrink-0 bg-white/20 text-white hover:bg-white/30 border-2 border-white/30';
+          if (iconSpan) {
+            iconSpan.className = 'w-7 h-7 rounded-xl bg-white/30 text-white flex items-center justify-center font-mono text-xs font-black';
+          }
+        }
+      });
+
+      for (let i = 1; i <= totalSteps; i++) {
+        const pane = document.getElementById(`step-pane-${i}`);
+        if (pane) {
+          if (i === currentStep) {
+            pane.classList.remove('hidden');
+            pane.classList.add('flex');
+          } else {
+            pane.classList.add('hidden');
+            pane.classList.remove('flex');
+          }
+        }
+      }
+
+      if (currentStep === 4) {
+        setTimeout(handleSimulationCanvasResize, 40);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.step-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const s = parseInt(btn.getAttribute('data-step'), 10);
+        goToStep(s);
+      });
+    });
+
+    function toggleApersepsiAnswer(elemId, triggerBtn) {
+      SoundEngine.click();
+      const el = document.getElementById(elemId);
+      const icon = triggerBtn.querySelector('.fa-chevron-down') || triggerBtn.querySelector('.fa-chevron-up');
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        if (icon) icon.className = 'fa-solid fa-chevron-up transition-transform text-lg';
+      } else {
+        el.classList.add('hidden');
+        if (icon) icon.className = 'fa-solid fa-chevron-down transition-transform text-lg';
+      }
+    }
+
+    /* =========================================================================
+       3. TAHAP 4: SIMULASI FISIKA HIDUP
+       ========================================================================= */
+    const canvas = document.getElementById('classroomPhysicsCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let currentCase = 'ball';
+    let isSimPaused = false;
+    let simTime = 0;
+    let lastTimestamp = performance.now();
+    let currentFps = 60;
+
+    const SimState = {
+      ball: {
+        x: 140,
+        radius: 36,
+        mass: 5,
+        vx: 0,
+        rotation: 0,
+        isKicked: false,
+        kickAnimationProgress: 0,
+        surfaceType: 'rumput',
+        frictionCoeff: 0.018
+      },
+      car: {
+        x: 80,
+        vx: 0,
+        isBraking: false,
+        seatbeltActive: true,
+        passengerTilt: 0,
+        wheelAngle: 0
+      },
+      rocket: {
+        x: 90,
+        y: 210,
+        vx: 0,
+        isThrustActive: false,
+        exhaustParticles: [],
+        starField: []
+      }
+    };
+
+    for (let i = 0; i < 85; i++) {
+      SimState.rocket.starField.push({
+        x: Math.random() * 1200,
+        y: Math.random() * 500,
+        radius: Math.random() * 2.5 + 0.8,
+        parallaxSpeed: Math.random() * 0.9 + 0.3
+      });
+    }
+
+    function handleSimulationCanvasResize() {
+      const containerRect = canvas.parentElement.getBoundingClientRect();
+      if (containerRect.width > 0) {
+        canvas.width = containerRect.width;
+        canvas.height = containerRect.height || 400;
+      }
+    }
+    window.addEventListener('resize', handleSimulationCanvasResize);
+
+    function setSimScenario(caseName) {
+      currentCase = caseName;
+      SoundEngine.click();
+
+      document.querySelectorAll('.sim-case-btn').forEach(btn => {
+        if (btn.getAttribute('data-case') === caseName) {
+          btn.classList.add('active', 'border-sky-500');
+          btn.classList.remove('border-slate-300');
+        } else {
+          btn.classList.remove('active', 'border-sky-500');
+          btn.classList.add('border-slate-300');
+        }
+      });
+
+      resetCurrentCaseValues();
+      updateSimControlsAndNotes();
+    }
+
+    document.querySelectorAll('.sim-case-btn').forEach(btn => {
+      btn.addEventListener('click', () => setSimScenario(btn.getAttribute('data-case')));
+    });
+
+    function resetCurrentCaseValues() {
+      simTime = 0;
+      SimState.ball.x = 140;
+      SimState.ball.vx = 0;
+      SimState.ball.rotation = 0;
+      SimState.ball.isKicked = false;
+      SimState.ball.kickAnimationProgress = 0;
+
+      SimState.car.x = 80;
+      SimState.car.vx = 0;
+      SimState.car.isBraking = false;
+      SimState.car.passengerTilt = 0;
+
+      SimState.rocket.x = 90;
+      SimState.rocket.vx = 0;
+      SimState.rocket.isThrustActive = false;
+      SimState.rocket.exhaustParticles = [];
+    }
+
+    const caseBadgeText = document.getElementById('caseBadgeText');
+    const simBannerIcon = document.getElementById('simBannerIcon');
+    const simBannerTitle = document.getElementById('simBannerTitle');
+    const simBannerText = document.getElementById('simBannerText');
+    const caseActionControls = document.getElementById('caseActionControls');
+    const smartboardTeacherNotes = document.getElementById('smartboardTeacherNotes');
+
+    const teleW = document.getElementById('teleW');
+    const teleN = document.getElementById('teleN');
+    const teleFext = document.getElementById('teleFext');
+    const teleFgesek = document.getElementById('teleFgesek');
+    const teleResultant = document.getElementById('teleResultant');
+    const teleStatusBadge = document.getElementById('teleStatusBadge');
+
+    function updateSimControlsAndNotes() {
+      caseActionControls.innerHTML = '';
+
+      if (currentCase === 'ball') {
+        caseBadgeText.textContent = 'KASUS 1: BOLA DIAM & GAYA DORONG';
+        simBannerIcon.className = 'fa-solid fa-futbol text-sky-600 text-2xl mt-1 shrink-0';
+        simBannerTitle.textContent = 'Kasus 1: Mengapa Bola Diam Tetap Diam?';
+        simBannerText.textContent = 'Bola berada di atas rumput. Gaya berat (W) seimbang dengan gaya normal (N). Bola tidak akan bergerak kecuali ada gaya luar (tendangan kaki).';
+
+        const kickBtn = document.createElement('button');
+        kickBtn.className = 'px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-sky-500/25 active:scale-95 transition-all';
+        kickBtn.innerHTML = '<i class="fa-solid fa-shoe-prints"></i> Tendang Bola (Beri Gaya)';
+        kickBtn.onclick = () => {
+          if (!SimState.ball.isKicked || SimState.ball.vx < 0.2) {
+            SoundEngine.kick();
+            SimState.ball.isKicked = true;
+            SimState.ball.kickAnimationProgress = 1.0;
+            SimState.ball.vx = 8.8;
+            simBannerTitle.textContent = 'Gaya Luar Bekerja Sesaat!';
+            simBannerText.textContent = 'Kaki memberikan dorongan sehingga ΣF ≠ 0. Bola mengalami percepatan dan meluncur!';
+          }
+        };
+
+        const surfaceBtn = document.createElement('button');
+        surfaceBtn.className = 'px-4 py-3 rounded-2xl bg-white hover:bg-sky-50 border-2 border-sky-300 text-sm sm:text-base font-bold text-slate-700 flex items-center gap-2.5 transition-all shadow-sm';
+        surfaceBtn.innerHTML = `<i class="fa-solid fa-layer-group text-sky-600"></i> Permukaan: ${SimState.ball.surfaceType === 'rumput' ? 'Rumput (Ada Gesekan)' : 'Es (Licin Sempurna)'}`;
+        surfaceBtn.onclick = () => {
+          SoundEngine.click();
+          SimState.ball.surfaceType = SimState.ball.surfaceType === 'rumput' ? 'licin' : 'rumput';
+          SimState.ball.frictionCoeff = SimState.ball.surfaceType === 'rumput' ? 0.018 : 0.000;
+          surfaceBtn.innerHTML = `<i class="fa-solid fa-layer-group text-sky-600"></i> Permukaan: ${SimState.ball.surfaceType === 'rumput' ? 'Rumput (Ada Gesekan)' : 'Es (Licin Sempurna)'}`;
+          if (SimState.ball.surfaceType === 'licin') {
+            simBannerTitle.textContent = 'Eksperimen Tanpa Gesekan (Es Licin)';
+            simBannerText.textContent = 'Pada bidang es tanpa gesekan (f = 0), begitu bola ditendang, resultan gaya ΣF kembali 0. Bola meluncur lurus selamanya tanpa berhenti!';
+          }
+        };
+
+        caseActionControls.appendChild(kickBtn);
+        caseActionControls.appendChild(surfaceBtn);
+
+        smartboardTeacherNotes.innerHTML = `
+          <p><strong class="text-sky-700">1. Arah Vertikal:</strong> Gaya berat (<em class="text-rose-600 font-mono">W = 49.0 N</em>) diimbangi oleh gaya normal (<em class="text-sky-600 font-mono">N = 49.0 N</em>), jadi &Sigma;F<sub>y</sub> = 0.</p>
+          <p><strong class="text-sky-700">2. Arah Horizontal:</strong> Tanpa disentuh, &Sigma;F<sub>x</sub> = 0 (percepatan <em class="text-emerald-600 font-mono">a = 0</em>).</p>
+          <p><strong class="text-sky-700">3. Kenapa Berhenti di Rumput?</strong> Karena ada gaya gesek rumput yang melawan arah gerak bola.</p>
+        `;
+
+      } else if (currentCase === 'car') {
+        caseBadgeText.textContent = 'KASUS 2: MOBIL MELAJU & REM MENDADAK';
+        simBannerIcon.className = 'fa-solid fa-car-side text-rose-600 text-2xl mt-1 shrink-0';
+        simBannerTitle.textContent = 'Kasus 2: Kelembaman Penumpang di Mobil';
+        simBannerText.textContent = 'Klik "Jalankan Mobil", lalu tekan "Rem Mendadak!" untuk melihat bagaimana tubuh penumpang terdorong ke depan.';
+
+        const driveBtn = document.createElement('button');
+        driveBtn.className = 'px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-indigo-500/25 active:scale-95 transition-all';
+        driveBtn.innerHTML = '<i class="fa-solid fa-gauge-high"></i> Jalankan Mobil';
+        driveBtn.onclick = () => {
+          SoundEngine.click();
+          SimState.car.vx = 6.4;
+          SimState.car.isBraking = false;
+          simBannerTitle.textContent = 'Mobil & Penumpang Melaju Bersama';
+          simBannerText.textContent = 'Mobil dan tubuh penumpang sama-sama bergerak dengan kecepatan konstan 6.4 m/s.';
+        };
+
+        const brakeBtn = document.createElement('button');
+        brakeBtn.className = 'px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-rose-500/25 active:scale-95 transition-all';
+        brakeBtn.innerHTML = '<i class="fa-solid fa-hand-fist"></i> Rem Mendadak!';
+        brakeBtn.onclick = () => {
+          if (SimState.car.vx > 0.4) {
+            SoundEngine.brake();
+            SimState.car.isBraking = true;
+            simBannerTitle.textContent = 'Rem Diinjak: Badan Terdorong ke Depan!';
+            simBannerText.textContent = SimState.car.seatbeltActive 
+              ? 'Mobil berhenti karena rem, tapi tubuh penumpang tetap ingin maju dan tertahan aman oleh sabuk pengaman.' 
+              : 'BAHAYA! Tanpa sabuk pengaman, tubuh penumpang terhuyung maju karena tidak ada penahan!';
+          }
+        };
+
+        const seatbeltBtn = document.createElement('button');
+        seatbeltBtn.className = 'px-4 py-3 rounded-2xl bg-white hover:bg-sky-50 border-2 border-sky-300 text-sm sm:text-base font-bold text-slate-700 flex items-center gap-2.5 transition-all shadow-sm';
+        seatbeltBtn.innerHTML = `<i class="fa-solid fa-shield-halved ${SimState.car.seatbeltActive ? 'text-emerald-600' : 'text-slate-400'}"></i> Sabuk: ${SimState.car.seatbeltActive ? 'Terpasang' : 'Dilepas'}`;
+        seatbeltBtn.onclick = () => {
+          SoundEngine.click();
+          SimState.car.seatbeltActive = !SimState.car.seatbeltActive;
+          seatbeltBtn.innerHTML = `<i class="fa-solid fa-shield-halved ${SimState.car.seatbeltActive ? 'text-emerald-600' : 'text-slate-400'}"></i> Sabuk: ${SimState.car.seatbeltActive ? 'Terpasang' : 'Dilepas'}`;
+        };
+
+        caseActionControls.appendChild(driveBtn);
+        caseActionControls.appendChild(brakeBtn);
+        caseActionControls.appendChild(seatbeltBtn);
+
+        smartboardTeacherNotes.innerHTML = `
+          <p><strong class="text-sky-700">1. Kenapa Badan Maju?</strong> Bukan karena didorong ke depan, tapi karena tubuh penumpang ingin mempertahankan gerak laju awalnya.</p>
+          <p><strong class="text-sky-700">2. Peran Sabuk Pengaman:</strong> Memberikan gaya luar penahan agar tubuh ikut melambat bersama mobil.</p>
+        `;
+
+      } else if (currentCase === 'rocket') {
+        caseBadgeText.textContent = 'KASUS 3: ROKET DI LUAR ANGKASA';
+        simBannerIcon.className = 'fa-solid fa-shuttle-space text-emerald-600 text-2xl mt-1 shrink-0';
+        simBannerTitle.textContent = 'Kasus 3: Gerak Lurus Beraturan di Ruang Hampa';
+        simBannerText.textContent = 'Nyalakan mesin roket untuk memberi kecepatan, lalu matikan mesin untuk menguji kelembaman di luar angkasa tanpa gesekan udara.';
+
+        const thrustBtn = document.createElement('button');
+        thrustBtn.className = 'px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-emerald-500/25 active:scale-95 transition-all';
+        thrustBtn.innerHTML = '<i class="fa-solid fa-fire"></i> Nyalakan Mesin';
+        thrustBtn.onclick = () => {
+          SoundEngine.thrust();
+          SimState.rocket.isThrustActive = true;
+          simBannerTitle.textContent = 'Mesin Menyala: Roket Dipercepat';
+          simBannerText.textContent = 'Semburan gas memberikan gaya dorong (F > 0), sehingga kecepatan roket bertambah.';
+        };
+
+        const cutoffBtn = document.createElement('button');
+        cutoffBtn.className = 'px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-sm sm:text-base flex items-center gap-2.5 shadow-lg shadow-sky-500/25 active:scale-95 transition-all';
+        cutoffBtn.innerHTML = '<i class="fa-solid fa-power-off"></i> Matikan Mesin (&Sigma;F = 0)';
+        cutoffBtn.onclick = () => {
+          SoundEngine.click();
+          SimState.rocket.isThrustActive = false;
+          simBannerTitle.textContent = 'Hukum I Newton: Meluncur Selamanya Tanpa Bahan Bakar!';
+          simBannerText.textContent = 'Mesin dimatikan! Karena di luar angkasa tidak ada udara (gesekan f = 0), ΣF = 0. Roket meluncur konstan selamanya!';
+        };
+
+        caseActionControls.appendChild(thrustBtn);
+        caseActionControls.appendChild(cutoffBtn);
+
+        smartboardTeacherNotes.innerHTML = `
+          <p><strong class="text-sky-700">1. Tanpa Hambatan Udara:</strong> Di luar angkasa tidak ada udara, sehingga gesekan bernilai nol (<em class="text-emerald-600 font-mono">f_gesek = 0 N</em>).</p>
+          <p><strong class="text-sky-700">2. Fakta Unik:</strong> Wahana antariksa tidak perlu menyalakan mesin terus-menerus untuk bergerak maju.</p>
+        `;
+      }
+    }
+
+    const simPlayPauseBtn = document.getElementById('simPlayPauseBtn');
+    const simPlayPauseIcon = document.getElementById('simPlayPauseIcon');
+    const simPlayPauseText = document.getElementById('simPlayPauseText');
+
+    simPlayPauseBtn.addEventListener('click', () => {
+      SoundEngine.click();
+      isSimPaused = !isSimPaused;
+      if (isSimPaused) {
+        simPlayPauseIcon.className = 'fa-solid fa-play text-emerald-600 text-base';
+        simPlayPauseText.textContent = 'Mulai';
+      } else {
+        simPlayPauseIcon.className = 'fa-solid fa-pause text-sky-600 text-base';
+        simPlayPauseText.textContent = 'Jeda';
+      }
+    });
+
+    document.getElementById('simResetBtn').addEventListener('click', () => {
+      SoundEngine.click();
+      resetCurrentCaseValues();
+      updateSimControlsAndNotes();
+    });
+
+    function drawVectorArrow(cCtx, fromX, fromY, toX, toY, color, labelText) {
+      const headLength = 12;
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+      const angle = Math.atan2(dy, dx);
+      const len = Math.sqrt(dx * dx + dy * dy);
+
+      if (len < 2) return;
+
+      cCtx.save();
+      cCtx.strokeStyle = color;
+      cCtx.fillStyle = color;
+      cCtx.lineWidth = 3;
+
+      cCtx.beginPath();
+      cCtx.moveTo(fromX, fromY);
+      cCtx.lineTo(toX, toY);
+      cCtx.stroke();
+
+      cCtx.beginPath();
+      cCtx.moveTo(toX, toY);
+      cCtx.lineTo(toX - headLength * Math.cos(angle - Math.PI / 6), toY - headLength * Math.sin(angle - Math.PI / 6));
+      cCtx.lineTo(toX - headLength * Math.cos(angle + Math.PI / 6), toY - headLength * Math.sin(angle + Math.PI / 6));
+      cCtx.closePath();
+      cCtx.fill();
+
+      if (labelText) {
+        cCtx.font = 'bold 13px "Space Grotesk", sans-serif';
+        cCtx.fillText(labelText, toX + 8, toY + 4);
+      }
+      cCtx.restore();
+    }
+
+    function mainSimulationLoop(now) {
+      const dt = (now - lastTimestamp) / 1000;
+      lastTimestamp = now;
+
+      if (dt > 0 && dt < 1) {
+        currentFps = Math.round(1 / dt);
+      }
+
+      if (!isSimPaused) {
+        simTime += dt;
+      }
+
+      document.getElementById('fpsDisplay').textContent = currentFps;
+      document.getElementById('simTimeDisplay').textContent = simTime.toFixed(1) + 's';
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (currentCase === 'ball') {
+        renderCaseBall(dt);
+      } else if (currentCase === 'car') {
+        renderCaseCar(dt);
+      } else if (currentCase === 'rocket') {
+        renderCaseRocket(dt);
+      }
+
+      requestAnimationFrame(mainSimulationLoop);
+    }
+
+    function renderCaseBall(dt) {
+      const b = SimState.ball;
+      const w = canvas.width;
+      const h = canvas.height;
+      const groundY = h - 80;
+
+      const sky = ctx.createLinearGradient(0, 0, 0, groundY);
+      sky.addColorStop(0, '#0f172a');
+      sky.addColorStop(1, '#1e293b');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, groundY);
+
+      ctx.fillStyle = b.surfaceType === 'rumput' ? '#15803d' : '#0284c7';
+      ctx.fillRect(0, groundY, w, h - groundY);
+      ctx.fillStyle = b.surfaceType === 'rumput' ? '#22c55e' : '#38bdf8';
+      ctx.fillRect(0, groundY, w, 6);
+
+      let accel = 0;
+      let fFriction = 0;
+      let fExt = 0;
+
+      if (!isSimPaused) {
+        if (b.isKicked) {
+          fFriction = b.frictionCoeff * (b.mass * 9.8);
+          const decel = fFriction / b.mass;
+
+          if (b.vx > 0.05) {
+            b.vx -= decel * dt * 60;
+            accel = -decel;
+            b.rotation += (b.vx / b.radius);
+          } else {
+            b.vx = 0;
+            accel = 0;
+          }
+          b.x += b.vx;
+
+          if (b.x > w + b.radius) b.x = -b.radius;
+        }
+
+        if (b.kickAnimationProgress > 0) {
+          b.kickAnimationProgress -= dt * 2.5;
+          fExt = 65 * b.kickAnimationProgress;
+        }
+      }
+
+      const ballY = groundY - b.radius;
+
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath();
+      ctx.ellipse(b.x, groundY + 5, b.radius * 0.9, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (b.kickAnimationProgress > 0) {
+        const footX = b.x - b.radius - (b.kickAnimationProgress * 35);
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath();
+        ctx.roundRect(footX - 26, ballY - 12, 42, 26, 8);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px "Space Grotesk"';
+        ctx.fillText('F_kaki', footX - 22, ballY + 5);
+      }
+
+      ctx.save();
+      ctx.translate(b.x, ballY);
+      ctx.rotate(b.rotation);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#0f172a';
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      for (let i = 0; i < 5; i++) {
+        const ang = (i * Math.PI * 2) / 5;
+        const px = Math.cos(ang) * (b.radius * 0.52);
+        const py = Math.sin(ang) * (b.radius * 0.52);
+        ctx.beginPath();
+        ctx.arc(px, py, 7.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      drawVectorArrow(ctx, b.x, ballY - b.radius, b.x, ballY - b.radius - 65, '#0284c7', 'N = 49.0 N');
+      drawVectorArrow(ctx, b.x, ballY + b.radius, b.x, ballY + b.radius + 65, '#e11d48', 'W = 49.0 N');
+
+      if (fExt > 0) {
+        drawVectorArrow(ctx, b.x + b.radius, ballY, b.x + b.radius + (fExt * 1.4), ballY, '#d97706', `F_ext=${fExt.toFixed(0)}N`);
+      }
+      if (b.vx > 0.1 && fFriction > 0) {
+        drawVectorArrow(ctx, b.x - b.radius, ballY, b.x - b.radius - (fFriction * 35), ballY, '#64748b', `f_g=${fFriction.toFixed(1)}N`);
+      }
+
+      const netF = fExt - (b.vx > 0.05 ? fFriction : 0);
+      document.getElementById('canvasHudV').textContent = `${b.vx.toFixed(2)} m/s`;
+      document.getElementById('canvasHudA').textContent = `${accel.toFixed(2)} m/s²`;
+      document.getElementById('canvasHudF').textContent = `${netF.toFixed(2)} N`;
+
+      teleW.textContent = '49.0 N';
+      teleN.textContent = '49.0 N';
+      teleFext.textContent = `${fExt.toFixed(1)} N`;
+      teleFgesek.textContent = `${(b.vx > 0.05 ? fFriction : 0).toFixed(1)} N`;
+      teleResultant.textContent = `${Math.abs(netF).toFixed(2)} N`;
+
+      if (Math.abs(netF) < 0.1) {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-emerald-200 text-emerald-800 border-2 border-emerald-400';
+        teleStatusBadge.textContent = 'SETIMBANG (ΣF = 0)';
+      } else {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-amber-200 text-amber-900 border-2 border-amber-400';
+        teleStatusBadge.textContent = 'TAK SETIMBANG (a ≠ 0)';
+      }
+    }
+
+    function renderCaseCar(dt) {
+      const c = SimState.car;
+      const w = canvas.width;
+      const h = canvas.height;
+      const roadY = h - 90;
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, w, roadY);
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, roadY, w, h - roadY);
+
+      ctx.strokeStyle = '#f8fafc';
+      ctx.lineWidth = 3.5;
+      ctx.setLineDash([35, 25]);
+      ctx.beginPath();
+      ctx.moveTo(0, roadY + 42);
+      ctx.lineTo(w, roadY + 42);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      let accel = 0;
+      let brakeForce = 0;
+
+      if (!isSimPaused) {
+        if (c.vx > 0) {
+          c.x += c.vx;
+          c.wheelAngle += c.vx * 0.12;
+
+          if (c.isBraking) {
+            brakeForce = 850;
+            const decel = 7.5;
+            c.vx -= decel * dt;
+            accel = -decel;
+
+            if (c.vx <= 0) {
+              c.vx = 0;
+              c.isBraking = false;
+              accel = 0;
+            }
+          }
+
+          if (c.x > w + 80) c.x = -180;
+        }
+
+        const targetTilt = c.isBraking ? (c.seatbeltActive ? 15 : 45) : 0;
+        c.passengerTilt += (targetTilt - c.passengerTilt) * 0.18;
+      }
+
+      const carY = roadY - 58;
+      ctx.save();
+      ctx.translate(c.x, carY);
+
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.roundRect(0, 20, 195, 42, 12);
+      ctx.fill();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.roundRect(36, -12, 105, 36, 10);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+      ctx.fillRect(44, -6, 88, 24);
+
+      ctx.save();
+      ctx.translate(85, 10);
+      ctx.rotate((c.passengerTilt * Math.PI) / 180);
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(0, -16, 9.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(-7, -6, 14, 20);
+
+      if (c.seatbeltActive) {
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(-9, -8);
+        ctx.lineTo(9, 12);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      drawCarWheel(36, 62, c.wheelAngle);
+      drawCarWheel(156, 62, c.wheelAngle);
+
+      ctx.restore();
+
+      if (c.passengerTilt > 4) {
+        drawVectorArrow(ctx, c.x + 85, carY - 22, c.x + 85 + (c.passengerTilt * 2.2), carY - 22, '#e11d48', 'Inersia Tubuh');
+      }
+
+      const netF = c.isBraking ? -brakeForce : 0;
+      document.getElementById('canvasHudV').textContent = `${c.vx.toFixed(2)} m/s`;
+      document.getElementById('canvasHudA').textContent = `${accel.toFixed(2)} m/s²`;
+      document.getElementById('canvasHudF').textContent = `${netF.toFixed(0)} N`;
+
+      teleW.textContent = '12000 N';
+      teleN.textContent = '12000 N';
+      teleFext.textContent = '0 N';
+      teleFgesek.textContent = `${(c.isBraking ? brakeForce : 0).toFixed(0)} N`;
+      teleResultant.textContent = `${Math.abs(netF).toFixed(0)} N`;
+
+      if (c.isBraking) {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-rose-200 text-rose-900 border-2 border-rose-400';
+        teleStatusBadge.textContent = 'DIPERLAMBAT (ΣF ≠ 0)';
+      } else {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-emerald-200 text-emerald-900 border-2 border-emerald-400';
+        teleStatusBadge.textContent = 'GLB (ΣF = 0)';
+      }
+    }
+
+    function drawCarWheel(wx, wy, ang) {
+      ctx.save();
+      ctx.translate(wx, wy);
+      ctx.rotate(ang);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(0, 0, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.arc(0, 0, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function renderCaseRocket(dt) {
+      const r = SimState.rocket;
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#ffffff';
+      r.starField.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fill();
+        if (!isSimPaused) {
+          s.x -= s.parallaxSpeed + (r.vx * 0.4);
+          if (s.x < 0) s.x = w;
+        }
+      });
+
+      let accel = 0;
+      let thrustN = 0;
+
+      if (!isSimPaused) {
+        if (r.isThrustActive) {
+          thrustN = 4500;
+          accel = 2.6;
+          r.vx += accel * dt;
+
+          for (let i = 0; i < 3; i++) {
+            r.exhaustParticles.push({
+              x: r.x - 32,
+              y: r.y + (Math.random() * 14 - 7),
+              vx: -(Math.random() * 7 + 4),
+              vy: Math.random() * 2 - 1,
+              size: Math.random() * 6 + 3.5,
+              alpha: 1
+            });
+          }
+        } else {
+          accel = 0;
+          thrustN = 0;
+        }
+
+        r.x += r.vx;
+        if (r.x > w + 70) r.x = -70;
+      }
+
+      for (let i = r.exhaustParticles.length - 1; i >= 0; i--) {
+        const p = r.exhaustParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.04;
+        ctx.fillStyle = `rgba(249, 115, 22, ${Math.max(0, p.alpha)})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        if (p.alpha <= 0) r.exhaustParticles.splice(i, 1);
+      }
+
+      ctx.save();
+      ctx.translate(r.x, r.y);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 45, 17, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.moveTo(38, -11);
+      ctx.lineTo(58, 0);
+      ctx.lineTo(38, 11);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#4f46e5';
+      ctx.beginPath();
+      ctx.moveTo(-18, -14);
+      ctx.lineTo(-40, -25);
+      ctx.lineTo(-28, 0);
+      ctx.lineTo(-40, 25);
+      ctx.lineTo(-18, 14);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(12, 0, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(12, 0, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      if (r.vx > 0.1) {
+        drawVectorArrow(ctx, r.x + 60, r.y, r.x + 60 + (r.vx * 15), r.y, '#059669', `v = ${r.vx.toFixed(1)} m/s (GLB)`);
+      }
+
+      document.getElementById('canvasHudV').textContent = `${r.vx.toFixed(2)} m/s`;
+      document.getElementById('canvasHudA').textContent = `${accel.toFixed(2)} m/s²`;
+      document.getElementById('canvasHudF').textContent = `${thrustN.toFixed(0)} N`;
+
+      teleW.textContent = '0 N (Hampa)';
+      teleN.textContent = '0 N (Hampa)';
+      teleFext.textContent = `${thrustN.toFixed(0)} N`;
+      teleFgesek.textContent = '0 N (Vakum)';
+      teleResultant.textContent = `${thrustN.toFixed(0)} N`;
+
+      if (r.isThrustActive) {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-emerald-200 text-emerald-900 border-2 border-emerald-400';
+        teleStatusBadge.textContent = 'DIPERCEPAT (F > 0)';
+      } else {
+        teleStatusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-bold font-mono bg-sky-200 text-sky-900 border-2 border-sky-400';
+        teleStatusBadge.textContent = 'GLB MURNI (ΣF = 0)';
+      }
+    }
+
+    /* =========================================================================
+       4. TAHAP 5: EVALUASI & SERTIFIKAT
+       ========================================================================= */
+    const evalQuestionsData = [
+      {
+        caseCategory: "KASUS 1 &bull; BOLA PADA PERMUKAAN ES LICIN",
+        question: "Pada simulasi Kasus 1, ketika permukaan diubah menjadi 'Es Licin Sempurna' dan bola ditendang sekali, mengapa bola terus meluncur tanpa pernah melambat dan berhenti?",
+        options: [
+          "Karena gaya gravitasi tiba-tiba hilang sehingga bola melayang.",
+          "Karena tidak ada gaya gesekan luar yang menghambat, sehingga resultan ΣF = 0 dan bola mempertahankan kelajuannya.",
+          "Karena energi tendangan kaki tersimpan di dalam bola selamanya.",
+          "Karena bola berubah menjadi es yang menghasilkan tenaga dorong sendiri."
+        ],
+        correctIndex: 1,
+        explanation: "Tepat sekali! Di atas es licin tidak ada gaya gesek horizontal (f = 0). Karena resultan gaya bersih nol (ΣF = 0), sesuai Hukum I Newton benda yang bergerak akan terus meluncur konstan dalam garis lurus."
+      },
+      {
+        caseCategory: "KASUS 2 &bull; PENUMPANG MOBIL SAAT MENGEREM MENDADAK",
+        question: "Pada simulasi Kasus 2, mengapa tubuh penumpang terdorong ke arah DEPAN saat mobil direm mendadak? Gaya apa yang mendorongnya?",
+        options: [
+          "Ada angin kencang dari depan mobil yang mendorong tubuh penumpang.",
+          "Gaya rem dari ban mendorong kursi ke depan.",
+          "Sebenarnya tidak ada gaya yang mendorong ke depan; tubuh penumpang hanya memiliki kelembaman untuk mempertahankan gerak laju awalnya.",
+          "Gaya gravitasi bumi mendadak berubah arah ke depan."
+        ],
+        correctIndex: 2,
+        explanation: "Benar! Rem hanya menghentikan mobil. Tubuh penumpang yang tadinya bergerak bersama mobil ingin terus melaju ke depan karena kelembaman alaminya."
+      },
+      {
+        caseCategory: "KASUS 3 &bull; ROKET DI LUAR ANGKASA HAMPA UDARA",
+        question: "Berdasarkan Kasus 3, berapa besar gaya mesin yang dibutuhkan roket untuk terus meluncur dengan kecepatan konstan di luar angkasa yang hampa?",
+        options: [
+          "0 Newton (Mesin bisa dimatikan, roket tetap meluncur konstan).",
+          "1.000 Newton untuk melawan kehampaan.",
+          "Harus menyalakan bahan bakar maksimal terus-menerus.",
+          "Tergantung jauhnya planet terdekat."
+        ],
+        correctIndex: 0,
+        explanation: "Sangat tepat! Di luar angkasa tanpa gesekan udara (ΣF = 0), percepatan a = 0 m/s², sehingga roket meluncur konstan tanpa perlu menyalakan mesin lagi (F = 0 N)."
+      }
+    ];
+
+    let currentEvalIdx = 0;
+    let evalAnswers = new Array(evalQuestionsData.length).fill(null);
+    let evalScore = 0;
+
+    const evalCaseCategory = document.getElementById('evalCaseCategory');
+    const evalQuestionPrompt = document.getElementById('evalQuestionPrompt');
+    const evalOptionsContainer = document.getElementById('evalOptionsContainer');
+    const evalFeedbackBox = document.getElementById('evalFeedbackBox');
+    const evalFeedbackTitle = document.getElementById('evalFeedbackTitle');
+    const evalFeedbackText = document.getElementById('evalFeedbackText');
+    const evalProgressText = document.getElementById('evalProgressText');
+    const evalScoreText = document.getElementById('evalScoreText');
+    const evalPrevBtn = document.getElementById('evalPrevBtn');
+    const evalNextBtn = document.getElementById('evalNextBtn');
+
+    function renderEvalQuestion() {
+      const q = evalQuestionsData[currentEvalIdx];
+      evalCaseCategory.innerHTML = q.caseCategory;
+      evalQuestionPrompt.textContent = q.question;
+      evalProgressText.textContent = `${currentEvalIdx + 1} / ${evalQuestionsData.length}`;
+
+      evalOptionsContainer.innerHTML = '';
+      const isAnswered = evalAnswers[currentEvalIdx] !== null;
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-5 rounded-2xl border-2 transition-all text-sm sm:text-base font-bold flex items-center justify-between group shadow-sm ';
+
+        if (!isAnswered) {
+          btn.className += 'bg-slate-50 hover:bg-sky-50 border-sky-300 text-slate-700 hover:text-slate-900';
+          btn.onclick = () => selectEvalOption(optIdx);
+        } else {
+          btn.disabled = true;
+          if (optIdx === q.correctIndex) {
+            btn.className += 'bg-emerald-50 border-emerald-500 text-emerald-900';
+          } else if (optIdx === evalAnswers[currentEvalIdx]) {
+            btn.className += 'bg-rose-50 border-rose-500 text-rose-900';
+          } else {
+            btn.className += 'bg-slate-50 border-slate-200 text-slate-400 opacity-60';
+          }
+        }
+
+        btn.innerHTML = `
+          <span><strong class="font-mono text-sky-600 mr-2.5 text-base">${String.fromCharCode(65 + optIdx)}.</strong> ${optText}</span>
+          ${isAnswered && optIdx === q.correctIndex ? '<i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i>' : ''}
+          ${isAnswered && optIdx === evalAnswers[currentEvalIdx] && optIdx !== q.correctIndex ? '<i class="fa-solid fa-circle-xmark text-rose-600 text-xl"></i>' : ''}
+        `;
+
+        evalOptionsContainer.appendChild(btn);
+      });
+
+      if (isAnswered) {
+        evalFeedbackBox.classList.remove('hidden');
+        if (evalAnswers[currentEvalIdx] === q.correctIndex) {
+          evalFeedbackBox.className = 'mt-6 p-5 rounded-2xl border-2 bg-emerald-50 border-emerald-300 text-emerald-900';
+          evalFeedbackTitle.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i> Jawaban Kamu Benar!';
+        } else {
+          evalFeedbackBox.className = 'mt-6 p-5 rounded-2xl border-2 bg-rose-50 border-rose-300 text-rose-900';
+          evalFeedbackTitle.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i> Jawaban Kurang Tepat';
+        }
+        evalFeedbackText.textContent = q.explanation;
+      } else {
+        evalFeedbackBox.classList.add('hidden');
+      }
+
+      evalPrevBtn.disabled = currentEvalIdx === 0;
+      evalNextBtn.innerHTML = currentEvalIdx === evalQuestionsData.length - 1 ? 'Lihat Sertifikat <i class="fa-solid fa-award"></i>' : 'Selanjutnya <i class="fa-solid fa-chevron-right"></i>';
+    }
+
+    function selectEvalOption(choiceIdx) {
+      evalAnswers[currentEvalIdx] = choiceIdx;
+      const q = evalQuestionsData[currentEvalIdx];
+
+      if (choiceIdx === q.correctIndex) {
+        SoundEngine.correct();
+        evalScore = Math.round(evalAnswers.filter((ans, i) => ans === evalQuestionsData[i].correctIndex).length * (100 / evalQuestionsData.length));
+      } else {
+        SoundEngine.wrong();
+      }
+
+      evalScoreText.textContent = `${evalScore} / 100`;
+      renderEvalQuestion();
+    }
+
+    function prevEvalQuestion() {
+      if (currentEvalIdx > 0) {
+        SoundEngine.click();
+        currentEvalIdx--;
+        renderEvalQuestion();
+      }
+    }
+
+    function nextEvalQuestion() {
+      if (currentEvalIdx < evalQuestionsData.length - 1) {
+        SoundEngine.click();
+        currentEvalIdx++;
+        renderEvalQuestion();
+      } else {
+        SoundEngine.correct();
+        document.getElementById('evalQuizBox').classList.add('hidden');
+        document.getElementById('completionCertificateCard').classList.remove('hidden');
+        document.getElementById('certFinalScore').textContent = `${evalScore} / 100`;
+      }
+    }
+
+    function resetEvaluationQuiz() {
+      SoundEngine.click();
+      currentEvalIdx = 0;
+      evalAnswers = new Array(evalQuestionsData.length).fill(null);
+      evalScore = 0;
+      evalScoreText.textContent = '0 / 100';
+      document.getElementById('evalQuizBox').classList.remove('hidden');
+      document.getElementById('completionCertificateCard').classList.add('hidden');
+      renderEvalQuestion();
+    }
+
+    window.addEventListener('load', () => {
+      handleSimulationCanvasResize();
+      setSimScenario('ball');
+      renderEvalQuestion();
+      requestAnimationFrame(mainSimulationLoop);
+    });
+  </script>
+</body>
+</html>
